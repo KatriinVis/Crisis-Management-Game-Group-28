@@ -3,6 +3,8 @@ import { LeaderboardEntry } from '../types';
 const STORAGE_KEY = 'crisis_game_leaderboard';
 
 export const getLeaderboard = (): LeaderboardEntry[] => {
+  if (typeof window === 'undefined') return [];
+  
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];
@@ -13,6 +15,8 @@ export const getLeaderboard = (): LeaderboardEntry[] => {
 };
 
 export const saveScore = (entry: LeaderboardEntry): void => {
+  if (typeof window === 'undefined') return;
+
   try {
     const currentBoard = getLeaderboard();
     const newBoard = [...currentBoard, entry];

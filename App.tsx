@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { GameState, MetricType, Difficulty, INITIAL_METRICS, Choice, Scenario, MetricState, RoundFeedbackData } from './types';
 import { SCENARIOS } from './data/scenarios';
@@ -7,7 +6,7 @@ import { ScenarioView } from './components/ScenarioView';
 import { RoundFeedbackView } from './components/RoundFeedbackView';
 import { GameOver } from './components/GameOver';
 import { DIFFICULTY_SETTINGS, CRITICAL_THRESHOLD } from './constants';
-import { ShieldCheck, Target, AlertTriangle, Clock, Zap, TrendingUp } from 'lucide-react';
+import { ShieldCheck, Target, Clock, Zap } from 'lucide-react';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -33,8 +32,10 @@ const App: React.FC = () => {
 
   // Check unlock status on mount
   useEffect(() => {
-    const hasLost = localStorage.getItem('hasLostGame') === 'true';
-    setBailoutUnlocked(hasLost);
+    if (typeof window !== 'undefined') {
+      const hasLost = localStorage.getItem('hasLostGame') === 'true';
+      setBailoutUnlocked(hasLost);
+    }
   }, []);
 
   // Shuffle helper
@@ -189,7 +190,9 @@ const App: React.FC = () => {
         gameOverReason = `Critical failure in: ${failedMetrics.map(m => m.type).join(', ')}`;
         
         // Unlock bailout for future runs (and this one immediately) since they lost
-        localStorage.setItem('hasLostGame', 'true');
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('hasLostGame', 'true');
+        }
         setBailoutUnlocked(true);
 
         return {
